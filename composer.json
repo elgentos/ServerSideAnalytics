@@ -1,0 +1,15 @@
+{
+    "name": "elgentos/serversideanalytics",
+    "description": "Elgentos_ServerSideAnalytics",
+    "type": "magento-module",
+    "authors": [
+        {
+            "name": "peterjaap",
+            "email": "peterjaap@elgentos.nl"
+        }
+    ],
+    "require": {
+	"php": ">=5.5.0",
+	"theiconic/php-ga-measurement-protocol": "^2.0"
+    }
+}
