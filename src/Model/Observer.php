@@ -62,7 +62,7 @@ class Elgentos_ServerSideAnalytics_Model_Observer
                         'quantity' => $item->getQtyOrdered(),
                         'position' => $item->getId()
                     ]);
-                    Mage::dispatchEvent('elgentos_serversideanalytics_product_item_transport_object', ['product' => $product]);
+                    Mage::dispatchEvent('elgentos_serversideanalytics_product_item_transport_object', ['product' => $product, 'item' => $item]);
                     $products[] = $product;
                 }
             }
