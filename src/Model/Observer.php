@@ -82,16 +82,30 @@ class Elgentos_ServerSideAnalytics_Model_Observer
      */
     public function saveGaUserId($observer)
     {
+        if (!Mage::getStoreConfig(Mage_GoogleAnalytics_Helper_Data::XML_PATH_ACTIVE)) {
+            return;
+        }
+
+        if (!Mage::getStoreConfig(Mage_GoogleAnalytics_Helper_Data::XML_PATH_ACCOUNT)) {
+            Mage::log('Google Analytics extension and ServerSideAnalytics extension are activated but no Google Analytics account number has been found.');
+            return;
+        }
+
         $order = $observer->getEvent()->getOrder();
 
-        $gaCookie = Mage::getModel('core/cookie')->get('_ga');
+        $gaCookie = explode('.', Mage::getModel('core/cookie')
+                ->get('_ga'));
+
+        if (empty($gaCookie)) {
+            return;
+        }
 
         list(
             $gaCookieVersion,
             $gaCookieDomainComponents,
             $gaCookieUserId,
             $gaCookieTimestamp
-            ) = explode('.', $gaCookie);
+            ) = $gaCookie;
 
         if (!$gaCookieUserId || !$gaCookieTimestamp) {
             return;
