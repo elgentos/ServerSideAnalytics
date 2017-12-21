@@ -96,7 +96,7 @@ class Elgentos_ServerSideAnalytics_Model_Observer
         $gaCookie = explode('.', Mage::getModel('core/cookie')
                 ->get('_ga'));
 
-        if (empty($gaCookie)) {
+        if (empty($gaCookie) || count($gaCookie) < 4) {
             return;
         }
 
