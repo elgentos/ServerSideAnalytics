@@ -18,6 +18,7 @@ class Elgentos_ServerSideAnalytics_Model_GAClient {
      */
     public function __construct()
     {
+        /** @var Analytics analytics */
         $this->analytics = new Analytics(true);
 
         if (Mage::getIsDeveloperMode()) {
@@ -29,10 +30,10 @@ class Elgentos_ServerSideAnalytics_Model_GAClient {
     }
 
     /**
-     * @param $data
+     * @param Varien_Object $data
      * @throws Exception
      */
-    public function setTrackingData($data)
+    public function setTrackingData(Varien_Object $data)
     {
         if (!$data->getTrackingId()) {
             throw new Exception ('No tracking ID set for GA client.');
@@ -56,6 +57,10 @@ class Elgentos_ServerSideAnalytics_Model_GAClient {
 
         if ($data->getUserAgentOverride()) {
             $this->analytics->setUserAgentOverride($data->getUserAgentOverride());
+        }
+
+        if ($data->getDocumentPath()) {
+            $this->analytics->setDocumentPath($data->getDocumentPath());
         }
     }
 

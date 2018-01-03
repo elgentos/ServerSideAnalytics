@@ -27,14 +27,17 @@ class Elgentos_ServerSideAnalytics_Model_Observer
             return;
         }
 
+        /** @var Elgentos_ServerSideAnalytics_Model_GAClient $client */
         $client = Mage::getModel('elgentos_serversideanalytics/gAClient');
 
         try {
             $trackingDataObject = new Varien_Object([
-                'tracking_id' => Mage::getStoreConfig(Mage_GoogleAnalytics_Helper_Data::XML_PATH_ACCOUNT),
-                'client_id' => $order->getGaUserId(),
-                'ip_override' => $order->getRemoteIp()
+                'tracking_id'   => Mage::getStoreConfig(Mage_GoogleAnalytics_Helper_Data::XML_PATH_ACCOUNT),
+                'client_id'     => $order->getGaUserId(),
+                'ip_override'   => $order->getRemoteIp(),
+                'document_path' => '/checkout/onepage/success/'
             ]);
+
             Mage::dispatchEvent('elgentos_serversideanalytics_tracking_data_transport_object', ['tracking_data_object' => $trackingDataObject]);
             $client->setTrackingData($trackingDataObject);
 
