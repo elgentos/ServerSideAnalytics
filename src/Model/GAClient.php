@@ -21,7 +21,7 @@ class Elgentos_ServerSideAnalytics_Model_GAClient {
         /** @var Analytics analytics */
         $this->analytics = new Analytics(true);
 
-        if (Mage::getIsDeveloperMode() || Mage::getIsDeveloperMode('google/analytics/serverside_debug')) {
+        if (Mage::getIsDeveloperMode() || Mage::getStoreConfigFlag('google/analytics/serverside_debug')) {
             // $this->analytics = new Analytics(true, true); // for dev/staging envs where dev mode is off but we don't want to send events
             $this->analytics->setDebug(true);
         }
@@ -127,7 +127,7 @@ class Elgentos_ServerSideAnalytics_Model_GAClient {
             ->sendEvent();
 
         // @codingStandardsIgnoreStart
-        if (Mage::getIsDeveloperMode() || Mage::getIsDeveloperMode('google/analytics/serverside_debug')) {
+        if (Mage::getIsDeveloperMode() || Mage::getStoreConfigFlag('google/analytics/serverside_debug')) {
             Mage::log(print_r($response->getDebugResponse(), true), null, 'elgentos_serversideanalytics_debug_response.log');
         }
         // @codingStandardsIgnoreEnd
