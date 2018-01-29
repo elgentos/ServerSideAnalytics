@@ -4,6 +4,8 @@ use TheIconic\Tracking\GoogleAnalytics\Analytics;
 
 class Elgentos_ServerSideAnalytics_Model_GAClient {
 
+    const GOOGLE_ANALYTICS_SERVERSIDE_DEBUG = 'google/analytics/serverside_debug';
+
     /* Analytics object which holds transaction data */
     protected $analytics;
 
@@ -21,7 +23,7 @@ class Elgentos_ServerSideAnalytics_Model_GAClient {
         /** @var Analytics analytics */
         $this->analytics = new Analytics(true);
 
-        if (Mage::getIsDeveloperMode()) {
+        if (Mage::getIsDeveloperMode() || Mage::getStoreConfigFlag(self::GOOGLE_ANALYTICS_SERVERSIDE_DEBUG)) {
             // $this->analytics = new Analytics(true, true); // for dev/staging envs where dev mode is off but we don't want to send events
             $this->analytics->setDebug(true);
         }
@@ -127,7 +129,7 @@ class Elgentos_ServerSideAnalytics_Model_GAClient {
             ->sendEvent();
 
         // @codingStandardsIgnoreStart
-        if (Mage::getIsDeveloperMode()) {
+        if (Mage::getIsDeveloperMode() || Mage::getStoreConfigFlag(self::GOOGLE_ANALYTICS_SERVERSIDE_DEBUG)) {
             Mage::log(print_r($response->getDebugResponse(), true), null, 'elgentos_serversideanalytics_debug_response.log');
         }
         // @codingStandardsIgnoreEnd
