@@ -48,21 +48,21 @@ class Elgentos_ServerSideAnalytics_Model_Observer
                         'affiliation' => $order->getStoreName(),
                         'revenue' => $invoice->getBaseGrandTotal(),
                         'tax' => $invoice->getTaxAmount(),
-                        'shipping' => $invoice->getShippingAmount(),
+                        'shipping' => $this->getPaidShippingCosts($invoice),
                         'coupon_code' => $order->getCouponCode()
                     ]
                 )
             );
 
             $products = [];
-            /** @var Mage_Sales_Model_Order_Item $item */
+            /** @var Mage_Sales_Model_Order_Invoice_Item $item */
             foreach ($invoice->getAllItems() as $item) {
-                if (!$item->isDeleted() && !$item->getParentItemId()) {
+                if (!$item->isDeleted() && !$item->getOrderItem()->getParentItemId()) {
                     $product = new Varien_Object([
                         'sku' => $item->getSku(),
                         'name' => $item->getName(),
-                        'price' => $item->getPrice(),
-                        'quantity' => $item->getQtyOrdered(),
+                        'price' => $this->getPaidProductPrice($item->getOrderItem()),
+                        'quantity' => $item->getOrderItem()->getQtyOrdered(),
                         'position' => $item->getId()
                     ]);
                     Mage::dispatchEvent('elgentos_serversideanalytics_product_item_transport_object', ['product' => $product, 'item' => $item]);
@@ -124,5 +124,31 @@ class Elgentos_ServerSideAnalytics_Model_Observer
         $gaUserId = implode('.', [$gaCookieUserId, $gaCookieTimestamp]);
 
         $order->setGaUserId($gaUserId);
+    }
+
+    /**
+     * Get the actual price the customer also saw in it's cart.
+     *
+     * @param  Mage_Sales_Model_Order_Item $orderItem
+     *
+     * @return float
+     */
+    private function getPaidProductPrice(Mage_Sales_Model_Order_Item $orderItem)
+    {
+        return Mage::getStoreConfig('tax/display/type	') == Mage_Tax_Model_Config::DISPLAY_TYPE_EXCLUDING_TAX
+            ? $orderItem->getPrice()
+            : $orderItem->getPriceInclTax();
+    }
+
+    /**
+     * @param  Mage_Sales_Model_Order_Invoice $invoice
+     *
+     * @return float
+     */
+    private function getPaidShippingCosts(Mage_Sales_Model_Order_Invoice $invoice)
+    {
+        return Mage::getStoreConfig('tax/display/type	') == Mage_Tax_Model_Config::DISPLAY_TYPE_EXCLUDING_TAX
+            ? $invoice->getShippingAmount()
+            : $invoice->getShippingInclTax();
     }
 }
